@@ -7,6 +7,7 @@ import { renderHome, bindHome } from './home.js';
 import { openAddSheet, bindAdd } from './add.js';
 import { renderReports, resizeReports, bindReports } from './reports.js';
 import { renderMine, bindMine } from './mine.js';
+import { bindInstall } from './install.js';
 
 async function switchTab(name) {
   $$('#tabbar .tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
@@ -30,9 +31,12 @@ function bindTabs() {
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   if (!location.protocol.startsWith('http')) return;
-  window.addEventListener('load', () => {
+  const doRegister = () => {
     navigator.serviceWorker.register('./sw.js').catch(() => { /* 离线能力注册失败不影响使用 */ });
-  });
+  };
+  // boot() 里的等待可能已经越过 load 事件，直接注册；否则等 load 再注册
+  if (document.readyState === 'complete') doRegister();
+  else window.addEventListener('load', doRegister, { once: true });
 }
 
 async function boot() {
@@ -50,6 +54,7 @@ async function boot() {
   bindAdd();
   bindReports();
   bindMine();
+  bindInstall();
 
   // 关键：先激活「明细」视图，否则首次加载时所有 .view 都是 display:none，页面会整片空白
   await switchTab('home');

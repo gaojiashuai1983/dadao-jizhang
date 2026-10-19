@@ -1,5 +1,5 @@
 /* 大道记账 · Service Worker（离线缓存应用外壳） */
-const CACHE_NAME = 'dadao-jizhang-v4';
+const CACHE_NAME = 'dadao-jizhang-v5';
 
 const PRECACHE = [
   './',
@@ -12,6 +12,7 @@ const PRECACHE = [
   './js/seed.js',
   './js/categories.js',
   './js/ui.js',
+  './js/install.js',
   './js/home.js',
   './js/add.js',
   './js/reports.js',
