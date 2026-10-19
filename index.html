@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<title>大道记账</title>
+<meta name="description" content="大道记账 · 简洁的本地记账工具" />
+<link rel="manifest" href="./manifest.json" />
+<meta name="theme-color" content="#F5A623" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="大道记账" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+<div id="app">
+
+  <main id="views">
+
+    <!-- ===================== 明细 ===================== -->
+    <section class="view active" id="view-home">
+      <header class="home-head">
+        <div class="hh-row1">
+          <button class="ym-btn" id="ymBtn" type="button">
+            <span id="ymYear">2026年</span><span id="ymMonth">10月</span>
+            <svg class="caret" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="seg" id="homeRangeSeg">
+            <button class="seg-btn active" data-range="month" type="button">月</button>
+            <button class="seg-btn" data-range="year" type="button">年</button>
+          </div>
+        </div>
+        <div class="hh-row2">
+          <div class="sum-item">
+            <span class="k">收入</span>
+            <span class="v income" id="sumIncome">0.00</span>
+          </div>
+          <div class="sum-sep"></div>
+          <div class="sum-item">
+            <span class="k">支出</span>
+            <span class="v expense" id="sumExpense">0.00</span>
+          </div>
+          <div class="sum-sep"></div>
+          <div class="sum-item">
+            <span class="k">结余</span>
+            <span class="v" id="sumBalance">0.00</span>
+          </div>
+        </div>
+      </header>
+      <div class="page-body">
+        <div class="home-banner" id="homeBanner">
+          <div class="hb-ico" id="hbIcon">💡</div>
+          <div class="hb-body">
+            <div class="hb-title" id="hbTitle">本月概览</div>
+            <div class="hb-sub" id="hbSub">还没有记账记录</div>
+          </div>
+          <button class="hb-action" id="hbAction" type="button">记一笔</button>
+        </div>
+        <div id="recordList"></div>
+      </div>
+    </section>
+
+    <!-- ===================== 图表 ===================== -->
+    <section class="view" id="view-reports">
+      <header class="page-head">
+        <h1>统计分析</h1>
+        <div class="seg" id="reportRangeSeg">
+          <button class="seg-btn active" data-range="month" type="button">月</button>
+          <button class="seg-btn" data-range="year" type="button">年</button>
+        </div>
+      </header>
+      <div class="page-body">
+        <button class="period-btn" id="reportPeriodBtn" type="button">
+          <span id="reportPeriodLabel">2026年10月</span>
+          <svg class="caret" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="stat-cards" id="reportStatCards"></div>
+
+        <div id="reportCharts"></div>
+
+        <div class="empty" id="reportEmpty" hidden>
+          <div class="empty-emoji">📊</div>
+          <p>该时间段还没有数据</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 我的 ===================== -->
+    <section class="view" id="view-mine">
+      <header class="page-head">
+        <h1>我的</h1>
+      </header>
+      <div class="page-body">
+        <div class="mine-brand">
+          <img class="mine-logo" src="./icons/icon-192.png" alt="大道记账" />
+          <div class="mine-brand-txt">
+            <strong>大道记账</strong>
+            <span>数据仅保存在本机，不上传云端</span>
+          </div>
+        </div>
+
+        <div class="group-title">账本管理</div>
+        <div class="list-card">
+          <button class="cell" id="cellCategories" type="button">
+            <span class="cell-icon">🗂️</span>
+            <span class="cell-label">类目管理</span>
+            <span class="cell-desc" id="cellCatDesc"></span>
+            <svg class="cell-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="cell" id="cellExport" type="button">
+            <span class="cell-icon">📤</span>
+            <span class="cell-label">导出 Excel</span>
+            <span class="cell-desc">按年度 / 月度</span>
+            <svg class="cell-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="group-title">数据</div>
+        <div class="list-card">
+          <button class="cell" id="cellSeed" type="button">
+            <span class="cell-icon">📥</span>
+            <span class="cell-label">导入 10 月账单明细</span>
+            <span class="cell-desc" id="cellSeedDesc"></span>
+            <svg class="cell-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="cell" id="cellClear" type="button">
+            <span class="cell-icon">🧹</span>
+            <span class="cell-label danger">清空全部账单</span>
+            <svg class="cell-arrow" viewBox="0 0 24 24" width="18" height="18"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <p class="mine-foot">大道记账 v1.0 · 本地记账，安心简单</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== 底部导航 ===================== -->
+  <nav id="tabbar">
+    <button class="tab active" data-tab="home" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>明细</span>
+    </button>
+    <button class="tab" data-tab="reports" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 19V10M10 19V5M16 19v-6M20 19H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>图表</span>
+    </button>
+    <button class="tab" data-tab="mine" type="button">
+      <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>我的</span>
+    </button>
+  </nav>
+
+  <button id="fab" type="button" aria-label="记一笔">
+    <svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+  </button>
+
+</div>
+
+<!-- ===================== 通用弹层 ===================== -->
+<div class="overlay" id="overlay" hidden></div>
+
+<!-- 添加 / 编辑 记账 -->
+<div class="sheet" id="sheetAdd" hidden>
+  <div class="sheet-top">
+    <div class="seg big" id="addTypeSeg">
+      <button class="seg-btn active" data-type="expense" type="button">支出</button>
+      <button class="seg-btn" data-type="income" type="button">收入</button>
+    </div>
+    <button class="sheet-close" id="addClose" type="button" aria-label="关闭">✕</button>
+  </div>
+
+  <div class="add-mode" id="addMode">记一笔</div>
+
+  <div class="add-amount-row">
+    <span class="add-amount-cny">¥</span>
+    <input class="add-amount-input" id="addAmount" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off" />
+  </div>
+
+  <div class="add-meta">
+    <label class="meta-item">
+      <span class="meta-k">日期</span>
+      <input type="date" id="addDate" class="meta-input" />
+    </label>
+    <label class="meta-item grow">
+      <span class="meta-k">备注</span>
+      <input type="text" id="addNote" class="meta-input" placeholder="可选，如：午饭" maxlength="40" />
+    </label>
+  </div>
+
+  <div class="sheet-section-title">选择类目</div>
+  <div class="sheet-body">
+    <div class="cat-grid" id="addCatGrid"></div>
+    <button class="cat-manage" id="addCatManage" type="button">＋ 添加自定义类目</button>
+  </div>
+
+  <div class="sheet-foot">
+    <button class="btn-primary" id="addSave" type="button">保存</button>
+  </div>
+</div>
+
+<!-- 更换类目（明细行内） -->
+<div class="sheet" id="sheetSwapCat" hidden>
+  <div class="sheet-top">
+    <div class="sheet-title-lg" id="swapTitle">更换类目</div>
+    <button class="sheet-close" id="swapClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="cat-grid" id="swapCatGrid"></div>
+  </div>
+</div>
+
+<!-- 期间选择（月 / 年） -->
+<div class="sheet" id="sheetPeriod" hidden>
+  <div class="sheet-top">
+    <div class="sheet-title-lg" id="periodTitle">选择月份</div>
+    <button class="sheet-close" id="periodClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="year-stepper">
+      <button class="stepper-btn" id="periodPrev" type="button" aria-label="上一年">‹</button>
+      <span class="stepper-year" id="periodYear">2026</span>
+      <button class="stepper-btn" id="periodNext" type="button" aria-label="下一年">›</button>
+    </div>
+    <div class="month-grid" id="periodGrid"></div>
+  </div>
+</div>
+
+<!-- 类目管理 -->
+<div class="sheet" id="sheetCatList" hidden>
+  <div class="sheet-top">
+    <div class="seg big" id="catListTypeSeg">
+      <button class="seg-btn active" data-type="expense" type="button">支出</button>
+      <button class="seg-btn" data-type="income" type="button">收入</button>
+    </div>
+    <button class="sheet-close" id="catListClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div id="catListRows" class="list-card"></div>
+    <button class="cat-add-btn" id="catListAdd" type="button">＋ 添加类目</button>
+    <p class="hint">点击类目可修改名称与图标；内置类目也可以改。</p>
+  </div>
+</div>
+
+<!-- 类目编辑 -->
+<div class="sheet" id="sheetCatEdit" hidden>
+  <div class="sheet-top">
+    <div class="sheet-title-lg" id="catEditTitle">添加类目</div>
+    <button class="sheet-close" id="catEditClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="seg big" id="catEditTypeSeg">
+      <button class="seg-btn active" data-type="expense" type="button">支出</button>
+      <button class="seg-btn" data-type="income" type="button">收入</button>
+    </div>
+    <label class="field">
+      <span class="field-k">类目名称</span>
+      <input type="text" id="catEditName" class="field-input" placeholder="如：宠物" maxlength="8" />
+    </label>
+    <div class="field-k">选择图标</div>
+    <div class="emoji-grid" id="emojiGrid"></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn-ghost" id="catEditDelete" type="button">删除</button>
+    <button class="btn-primary" id="catEditSave" type="button">保存</button>
+  </div>
+</div>
+
+<!-- 导出 Excel -->
+<div class="sheet" id="sheetExport" hidden>
+  <div class="sheet-top">
+    <div class="sheet-title-lg">导出 Excel</div>
+    <button class="sheet-close" id="exportClose" type="button" aria-label="关闭">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="seg big" id="exportRangeSeg">
+      <button class="seg-btn active" data-range="month" type="button">按月导出</button>
+      <button class="seg-btn" data-range="year" type="button">按年导出</button>
+    </div>
+    <button class="period-btn" id="exportPeriodBtn" type="button">
+      <span id="exportPeriodLabel">2026年10月</span>
+      <svg class="caret" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <p class="hint" id="exportHint"></p>
+  </div>
+  <div class="sheet-foot">
+    <button class="btn-primary" id="exportDo" type="button">导出 .xlsx</button>
+  </div>
+</div>
+
+<!-- 记录操作菜单（长按明细行） -->
+<div class="sheet" id="sheetActions" hidden>
+  <div class="sheet-body">
+    <div class="action-head" id="actionHead"></div>
+    <button class="action-item" id="actionEdit" type="button">修改（金额 / 类目 / 日期 / 备注）</button>
+    <button class="action-item danger" id="actionDelete" type="button">删除这条记录</button>
+    <button class="action-item cancel" id="actionCancel" type="button">取消</button>
+  </div>
+</div>
+
+<!-- 确认对话框 -->
+<div class="dialog" id="dialog" hidden>
+  <div class="dialog-box">
+    <div class="dialog-title" id="dialogTitle">提示</div>
+    <div class="dialog-text" id="dialogText"></div>
+    <div class="dialog-actions">
+      <button class="d-btn" id="dialogCancel" type="button">取消</button>
+      <button class="d-btn primary" id="dialogOk" type="button">确定</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="./lib/echarts.min.js"></script>
+<script src="./lib/xlsx.full.min.js"></script>
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>
